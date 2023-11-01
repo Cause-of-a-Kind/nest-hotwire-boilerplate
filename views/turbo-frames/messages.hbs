@@ -1,0 +1,10 @@
+<turbo-frame id="messages">
+  <h1>Messages</h1>
+  <ul>
+    {{#each messages}}
+      <turbo-frame id="message_{{this.id}}">
+        {{> message message=this}}
+      </turbo-frame>
+    {{/each}}
+  </ul>
+</turbo-frame>
