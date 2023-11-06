@@ -1,5 +1,7 @@
 <turbo-frame id="messages">
-  <h1>Messages</h1>
+  <turbo-stream-source src="/messages/events"></turbo-stream-source>
+  <h1 class="f1">Messages</h1>
+  {{#if messages}}
   <ul>
     {{#each messages}}
       <turbo-frame id="message_{{this.id}}">
@@ -7,4 +9,7 @@
       </turbo-frame>
     {{/each}}
   </ul>
+  {{else}}
+    <p>No messages yet.</p>
+  {{/if}}
 </turbo-frame>

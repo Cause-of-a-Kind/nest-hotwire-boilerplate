@@ -1,4 +1,4 @@
-<turbo-stream action="replace" target="message_{{message.id}}">
+<turbo-stream action="after" target="message_{{previousMessageId}}">
   <template>
     <turbo-frame id="message_{{message.id}}">
       {{> message message=message}}
