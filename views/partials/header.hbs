@@ -1,7 +1,7 @@
-<header>
-  {{ title }}
-  <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/about">About</a></li>
+<header class="flex items-center justify-between bb pv1 mb4">
+  <strong class="f3">{{ title }}</strong>
+  <ul class="list flex">
+    <li class="pr4">{{> link href="/" text="Home"}}</li>
+    <li>{{> link href="/about" text="About"}}</li>
   </ul>
 </header>

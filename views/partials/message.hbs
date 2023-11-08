@@ -1,5 +1,15 @@
-<li>{{message.text}}</li>
-<a href="/messages/{{message.id}}/edit">Edit</a>
-<form action="/messages/{{message.id}}/delete" method="POST">
-  <button type="submit">Delete</button>
-</form>
+<div class='flex items-center justify-between'>
+  <p class='ma0'>{{message.text}}</p>
+  <div class='flex justify-center items-end'>
+    <a
+      class='link blue underline dim'
+      href='/messages/{{message.id}}/edit'
+    >Edit</a>
+    <form class='ml3' action='/messages/{{message.id}}/delete' method='POST'>
+      <button
+        class='link bn bg-transparent underline red ma0 pa0 pointer dim'
+        type='submit'
+      >Delete</button>
+    </form>
+  </div>
+</div>

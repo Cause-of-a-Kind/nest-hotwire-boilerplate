@@ -1,12 +1,13 @@
 <turbo-frame id="messages">
-  <turbo-stream-source src="/messages/events"></turbo-stream-source>
-  <h1 class="f1">Messages</h1>
+  <h1 class="f2 mt4 mb2">Messages</h1>
   {{#if messages}}
-  <ul>
+  <ul class="list pl0 ma0">
     {{#each messages}}
-      <turbo-frame id="message_{{this.id}}">
-        {{> message message=this}}
-      </turbo-frame>
+      <li id="message_{{this.id}}_list_item" class="bb pv3">
+        <turbo-frame id="message_{{this.id}}">
+          {{> message message=this}}
+        </turbo-frame>
+      </li>
     {{/each}}
   </ul>
   {{else}}

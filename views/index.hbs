@@ -6,21 +6,27 @@
   <title>App</title>
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css" />
   <script type="module">
-    import hotwiredTurbo from 'https://cdn.skypack.dev/@hotwired/turbo';
+    import hotwiredTurbo, { connectStreamSource } from 'https://cdn.skypack.dev/@hotwired/turbo';
+    
+    const es = new EventSource("/turbo-stream/events");
+
+    connectStreamSource(es);
   </script>
   <script type="module">
     import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.2/+esm'
   </script>
 </head>
 
-<body class="helvetica pa3">
+<body class="helvetica ph3">
   {{> header title=title}}
-  <turbo-frame id="create-new-message">
-    {{> createMessageForm }}
-  </turbo-frame>
-  <turbo-frame id="messages" src="/messages">
-    <p>Loading...</p>
-  </turbo-frame>
+  <main class="min-vh-100">
+    <turbo-frame id="create-new-message">
+      {{> createMessageForm }}
+    </turbo-frame>
+    <turbo-frame id="messages" src="/messages">
+      <p>Loading...</p>
+    </turbo-frame>
+  </main>
   {{> footer}}
 </body>
 

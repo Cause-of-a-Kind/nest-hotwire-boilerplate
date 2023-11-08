@@ -1,5 +1,6 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render, Sse } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Observable, fromEvent, map } from 'rxjs';
 
 @Controller()
 export class AppController {
@@ -9,7 +10,7 @@ export class AppController {
   @Render('index')
   root() {
     return {
-      title: 'Home Page - Hello world MVC!',
+      title: 'Home Page',
     };
   }
 
@@ -17,7 +18,18 @@ export class AppController {
   @Render('index')
   getAbout() {
     return {
-      title: 'About Page - Hello world MVC!',
+      title: 'About Page',
     };
+  }
+
+  @Sse('turbo-stream/events')
+  async streamEvent(): Promise<Observable<MessageEvent>> {
+    return fromEvent(this.eventEmitter, 'turbo-stream.event').pipe(
+      map((payload: { template: string }) => {
+        return {
+          data: payload.template,
+        } as MessageEvent;
+      }),
+    );
   }
 }

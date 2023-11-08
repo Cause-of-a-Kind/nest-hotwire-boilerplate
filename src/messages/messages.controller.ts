@@ -6,12 +6,10 @@ import {
   Post,
   Render,
   Req,
-  Sse,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { MessagesService } from './messages.service';
 import { AppService } from '../app.service';
-import { Observable, fromEvent, map } from 'rxjs';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Controller('messages')
@@ -46,7 +44,7 @@ export class MessagesController {
     });
 
     this.appService.sendTurboStreamEvent(req, {
-      eventName: 'messages.event',
+      eventName: 'turbo-stream.event',
       template: 'turbo-streams/create-message',
       data: {
         previousMessageId: newMessage.id - 1,
@@ -72,7 +70,7 @@ export class MessagesController {
     });
 
     this.appService.sendTurboStreamEvent(req, {
-      eventName: 'messages.event',
+      eventName: 'turbo-stream.event',
       template: 'turbo-streams/update-message',
       data: { message: newMessage },
     });
@@ -90,7 +88,7 @@ export class MessagesController {
     });
 
     this.appService.sendTurboStreamEvent(req, {
-      eventName: 'messages.event',
+      eventName: 'turbo-stream.event',
       template: 'turbo-streams/delete-message',
       data: { message: removedMessage },
     });
@@ -98,16 +96,5 @@ export class MessagesController {
     return {
       message: removedMessage,
     };
-  }
-
-  @Sse('events')
-  async streamEvent(): Promise<Observable<MessageEvent>> {
-    return fromEvent(this.eventEmitter, 'messages.event').pipe(
-      map((payload: { template: string }) => {
-        return {
-          data: payload.template,
-        } as MessageEvent;
-      }),
-    );
   }
 }

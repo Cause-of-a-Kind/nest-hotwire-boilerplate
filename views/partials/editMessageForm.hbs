@@ -1,7 +1,7 @@
 <form action="/messages/{{message.id}}/edit" method="POST">
   <label>
-    Message:
-    <input type="text" name="text" value="{{message.text}}" />
+    <strong>Message:</strong>
+    <input class="dib input-reset pa2 w-20 br2 mr2" type="text" name="text" value="{{message.text}}" />
   </label>
-  <button type="submit">Update Message</button>
+  {{> button type="submit" text="Update Message"}}
 </form>
