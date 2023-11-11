@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -28,6 +29,14 @@ export class MessagesController {
     };
   }
 
+  @Get('count')
+  @Render('turbo-frames/messages-count')
+  async getMessagesCount() {
+    return {
+      messagesCount: await this.messagesService.messagesCount(),
+    };
+  }
+
   @Get(':id/edit')
   @Render('turbo-frames/edit-message')
   async editMessage(@Param('id') id: string) {
@@ -43,12 +52,21 @@ export class MessagesController {
       text,
     });
 
+    const [[, lastMessage], messagesCount] = await Promise.all([
+      await this.messagesService.messages({
+        orderBy: { id: 'desc' },
+        take: 2,
+      }),
+      await this.messagesService.messagesCount(),
+    ]);
+
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/create-message',
       data: {
-        previousMessageId: newMessage.id - 1,
+        previousMessageId: lastMessage.id,
         message: newMessage,
+        messagesCount,
       },
     });
 
@@ -80,17 +98,19 @@ export class MessagesController {
     };
   }
 
-  @Post(':id/delete')
+  @Delete(':id/delete')
   @Render('turbo-frames/delete-message')
   async delete(@Param('id') id: string, @Req() req: Request) {
     const removedMessage = await this.messagesService.deleteMessage({
       id: +id,
     });
 
+    const messagesCount = await this.messagesService.messagesCount();
+
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/delete-message',
-      data: { message: removedMessage },
+      data: { message: removedMessage, messagesCount },
     });
 
     return {

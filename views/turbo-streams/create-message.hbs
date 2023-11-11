@@ -7,3 +7,10 @@
     </li>
   </template>
 </turbo-stream>
+<turbo-stream action="replace" target="messages-count">
+  <template>
+    <turbo-frame id="messages-count">
+      <strong class="db mv3">Messages Count:
+        {{messagesCount}}</strong>
+    </turbo-frame>
+  </template>

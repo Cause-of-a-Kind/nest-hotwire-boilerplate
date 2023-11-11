@@ -31,6 +31,10 @@ export class MessagesService {
     });
   }
 
+  async messagesCount() {
+    return this.prisma.message.count();
+  }
+
   async createMessage(data: Prisma.MessageCreateInput): Promise<Message> {
     return this.prisma.message.create({
       data,
