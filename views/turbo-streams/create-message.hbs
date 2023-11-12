@@ -1,4 +1,4 @@
-<turbo-stream action="after" targets="#messages ul li:last-child">
+<turbo-stream action="append" targets="#messages ul">
   <template>
     <li id="message_{{message.id}}_list_item" class="bb pv3">
       <turbo-frame id="message_{{message.id}}">
@@ -7,7 +7,7 @@
     </li>
   </template>
 </turbo-stream>
-<turbo-stream action="replace" target="messages-count">
+<turbo-stream action="update" target="messages-count">
   <template>
     <turbo-frame id="messages-count">
       <strong class="db mv3">Messages Count:
