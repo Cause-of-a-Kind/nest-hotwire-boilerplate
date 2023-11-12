@@ -63,6 +63,7 @@ export class MessagesController {
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/create-message',
+      broadcastTo: 'all',
       data: {
         previousMessageId: lastMessage.id,
         message: newMessage,
@@ -90,6 +91,7 @@ export class MessagesController {
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/update-message',
+      broadcastTo: 'all',
       data: { message: newMessage },
     });
 
@@ -110,6 +112,7 @@ export class MessagesController {
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/delete-message',
+      broadcastTo: 'all',
       data: { message: removedMessage, messagesCount },
     });
 
