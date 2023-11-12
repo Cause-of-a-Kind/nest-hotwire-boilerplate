@@ -52,20 +52,13 @@ export class MessagesController {
       text,
     });
 
-    const [[, lastMessage], messagesCount] = await Promise.all([
-      await this.messagesService.messages({
-        orderBy: { id: 'desc' },
-        take: 2,
-      }),
-      await this.messagesService.messagesCount(),
-    ]);
+    const messagesCount = await this.messagesService.messagesCount();
 
     this.appService.sendTurboStreamEvent(req, {
       eventName: 'turbo-stream.event',
       template: 'turbo-streams/create-message',
-      broadcastTo: 'all',
+      broadcastTo: 'self',
       data: {
-        previousMessageId: lastMessage.id,
         message: newMessage,
         messagesCount,
       },

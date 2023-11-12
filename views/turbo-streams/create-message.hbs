@@ -1,4 +1,4 @@
-<turbo-stream action="after" target="message_{{previousMessageId}}_list_item">
+<turbo-stream action="after" targets="#messages ul li:last-child">
   <template>
     <li id="message_{{message.id}}_list_item" class="bb pv3">
       <turbo-frame id="message_{{message.id}}">
