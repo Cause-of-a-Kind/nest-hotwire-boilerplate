@@ -1,5 +1,7 @@
 <turbo-stream action="replace" target="message_{{message.id}}">
   <template>
+    <turbo-frame id="message_{{message.id}}">
       {{> message message=message}}
+    </turbo-frame>
   </template>
 </turbo-stream>

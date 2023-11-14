@@ -1,30 +1,18 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Render,
-  Req,
-  Sse,
-} from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Get, Render, Req, Res, Sse } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AppService } from './app.service';
 import { Observable, fromEvent, map } from 'rxjs';
+import { Request, Response } from 'express';
+import { createId } from '@paralleldrive/cuid2';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private eventEmitter: EventEmitter2) {}
 
   @Get()
   @Render('index')
   root() {
     return {
-      title: 'Home Page - Hello world MVC!',
+      title: 'Home Page',
     };
   }
 
@@ -32,53 +20,55 @@ export class AppController {
   @Render('index')
   getAbout() {
     return {
-      title: 'About Page - Hello world MVC!',
+      title: 'About Page',
     };
   }
 
-  @Get('/messages')
-  @Render('turbo-frames/messages')
-  getMessages() {
-    return {
-      messages: this.appService.getMessages(),
-    };
-  }
-
-  @Get('/messages/:id/edit')
-  @Render('turbo-frames/edit-message')
-  editMessage(@Param('id') id: string) {
-    return {
-      message: this.appService.findMessage(+id),
-    };
-  }
-
-  @Post('/messages/:id/edit')
-  @Render('turbo-frames/view-message')
-  updateMessage(
-    @Param('id') id: string,
-    @Body('text') text: string,
+  @Sse('turbo-stream/events')
+  async streamEvent(
     @Req() req: Request,
-  ) {
-    const newMessage = this.appService.editMessage(+id, text);
+    @Res() res: Response,
+  ): Promise<Observable<MessageEvent>> {
+    if (!req.cookies['x-turbo-stream-id']) {
+      res.cookie('x-turbo-stream-id', createId());
+    }
 
-    this.appService.sendTurboStreamEvent(req, {
-      template: 'turbo-streams/update-message',
-      data: { message: newMessage },
-    });
-
-    return {
-      message: newMessage,
-    };
-  }
-
-  @Sse('/turbo-streams')
-  async sse(): Promise<Observable<MessageEvent>> {
     return fromEvent(this.eventEmitter, 'turbo-stream.event').pipe(
-      map((payload: { template: string }) => {
-        return {
-          data: payload.template,
-        } as MessageEvent;
-      }),
+      map(
+        (payload: {
+          template: string;
+          requestStreamId: string;
+          broadcastTo: 'self' | 'all' | 'with-permissions';
+          predicate?: (req: Request) => Promise<boolean>;
+        }) => {
+          switch (payload.broadcastTo) {
+            case 'all':
+              return {
+                data: payload.template,
+              } as MessageEvent;
+            case 'self':
+              if (
+                !!payload.requestStreamId &&
+                !!req.cookies['x-turbo-stream-id'] &&
+                payload.requestStreamId === req.cookies['x-turbo-stream-id']
+              ) {
+                return {
+                  data: payload.template,
+                } as MessageEvent;
+              }
+
+              return;
+            case 'with-permissions':
+              // TODO: Implement permissions predicate
+              return {
+                data: payload.template,
+              } as MessageEvent;
+            default:
+              // This should never happen
+              return {} as never;
+          }
+        },
+      ),
     );
   }
 }

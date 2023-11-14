@@ -1,0 +1,14 @@
+<turbo-stream action='replace' target='message_{{message.id}}'>
+  <template>
+    <turbo-frame id='message_{{message.id}}'>
+      <p class='strike ma0'>{{message.text}}</p>
+    </turbo-frame>
+  </template>
+</turbo-stream>
+<turbo-stream action="replace" target="messages-count">
+  <template>
+    <turbo-frame id="messages-count">
+      <strong class="db mv3">Messages Count:
+        {{messagesCount}}</strong>
+    </turbo-frame>
+  </template>
